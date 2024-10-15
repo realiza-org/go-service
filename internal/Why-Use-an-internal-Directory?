@@ -1,0 +1,21 @@
+# Why Use an internal/ Directory?
+
+### Encapsulation and Package Privacy:
+
+- Go treats packages inside the internal/ directory as private to the module in which they are defined. This means that only code inside the same module or repository can import these packages.
+
+- Example:
+
+````
+github.com/yourusername/simple-api/
+├── cmd/
+│   └── main.go
+└── internal/
+    ├── server/
+    └── task/
+````
+
+
+Here, only the code in github.com/yourusername/simple-api can import internal/task and internal/server. If another project tries to import github.com/yourusername/simple-api/internal/task, it will result in a compile-time error.
+
+- This prevents unintended usage of internal logic by external consumers, offering better API boundaries.
