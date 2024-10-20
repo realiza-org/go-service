@@ -13,26 +13,30 @@ dockerhub-publish:
 	docker push joaowillamy/go-service:latest
 
 # *********************
-# 			K8S
+# 	K8S locally - minikuke
 # *********************
 
 k8s-local:
 	minikube start
 
-k8s-apply:
-	kubectl apply -f k8s/
-
 k8s-open-tunnel:
 	minikube tunnel
-
-k8s-get-ip-local:
-	kubectl get services go-app-service
 
 k8s-close-tunnel:
 	minikube pause
 	minikube stop
 
-# ******************************* others, jsut learning ******************
+# *********************
+# 			K8S
+# *********************
+
+k8s-apply:
+	kubectl apply -f k8s/
+
+k8s-get-ip-local:
+	kubectl get services go-app-service
+
+# ******************************* others ******************
 k8s-get-contexts:
 	kubectl config get-contexts
 
