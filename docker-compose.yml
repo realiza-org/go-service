@@ -6,15 +6,15 @@ networks:
 
 services:
   go:
-    image: go
+    image: go-app
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: go
+    container_name: go-app
     volumes:
-      - .:/go/src/app
+      - .:/usr/src/app
     ports:
       - 8080:8080
-    command: 
+    command: ["/usr/local/bin/app"]
     networks:
       - go
