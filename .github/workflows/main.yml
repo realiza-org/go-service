@@ -9,18 +9,25 @@ on:
       - main
 
 jobs:
-  build:
+  checkout:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
+  setup-go:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.21
+        go-version: 1.23
 
+  cache:
+    runs-on: ubuntu-latest
+    needs: setup-go
+    steps:
     - name: Cache Go modules
       uses: actions/cache@v2
       with:
@@ -31,17 +38,37 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
+  install-dependencies:
+    runs-on: ubuntu-latest
+    needs: cache
+    steps:
     - name: Install dependencies
       run: go mod download
 
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
     - name: Run tests
       run: go test ./...
 
+  build-docker:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
     - name: Build Docker image
       run: docker build -t joaowillamy/go-service:latest .
 
+  login-docker:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    steps:
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
+  push-docker:
+    runs-on: ubuntu-latest
+    needs: login-docker
+    steps:
     - name: Push Docker image
       run: docker push joaowillamy/go-service:latest
