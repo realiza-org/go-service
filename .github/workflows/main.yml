@@ -36,10 +36,6 @@ jobs:
     - name: Run tests
       run: go test ./...
 
-  docker:
-    runs-on: ubuntu-latest
-    needs: initial-check
-    steps:
     - name: Build Docker image
       run: docker build -t joaowillamy/go-service:latest .
 
