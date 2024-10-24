@@ -7,18 +7,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct {
+type TaskHandler struct {
 	service Service
 }
 
-func NewHandler(service Service) *Handler {
-	return &Handler{service: service}
+func NewTaskHandler(service Service) *TaskHandler {
+	return &TaskHandler{service: service}
 }
 
 func RegisterRoutes(g *echo.Group) {
 	repo := NewInMemoryRepository()
 	service := NewService(repo)
-	handler := NewHandler(service)
+	handler := NewTaskHandler(service)
 
 	g.GET("", handler.GetAll)
 	g.POST("", handler.Create)
@@ -27,12 +27,12 @@ func RegisterRoutes(g *echo.Group) {
 	g.DELETE("/:id", handler.Delete)
 }
 
-func (h *Handler) GetAll(c echo.Context) error {
+func (h *TaskHandler) GetAll(c echo.Context) error {
 	tasks := h.service.GetAll()
 	return c.JSON(http.StatusOK, tasks)
 }
 
-func (h *Handler) Create(c echo.Context) error {
+func (h *TaskHandler) Create(c echo.Context) error {
 	var task Task
 	if err := c.Bind(&task); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
@@ -42,7 +42,7 @@ func (h *Handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, createdTask)
 }
 
-func (h *Handler) GetByID(c echo.Context) error {
+func (h *TaskHandler) GetByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid task ID"})
@@ -56,7 +56,7 @@ func (h *Handler) GetByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, task)
 }
 
-func (h *Handler) Update(c echo.Context) error {
+func (h *TaskHandler) Update(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid task ID"})
@@ -75,7 +75,7 @@ func (h *Handler) Update(c echo.Context) error {
 	return c.JSON(http.StatusOK, updatedTask)
 }
 
-func (h *Handler) Delete(c echo.Context) error {
+func (h *TaskHandler) Delete(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid task ID"})
