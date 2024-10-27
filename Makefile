@@ -36,6 +36,24 @@ k8s-apply:
 k8s-get-ip-local:
 	kubectl get services go-app-service
 
+
+# *********************
+# 	ECS
+# *********************
+
+ecs-register-task:
+    aws ecs register-task-definition --cli-input-json file://ecs-task-definition.json
+
+ecs-create-service:
+    aws ecs create-service --cluster your-cluster-name --service-name go-service --task-definition go-service --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxxxx],securityGroups=[sg-xxxxxx],assignPublicIp=ENABLED}"
+
+ecs-update-service:
+    aws ecs update-service --cluster your-cluster-name --service go-service --force-new-deployment
+
+ecs-delete-service:
+    aws ecs delete-service --cluster your-cluster-name --service go-service --force
+
+
 # ******************************* others ******************
 k8s-get-contexts:
 	kubectl config get-contexts
