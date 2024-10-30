@@ -6,9 +6,6 @@ on:
       docker-image:
         required: true
         type: string
-      go-version:
-        required: true
-        type: string
     secrets:
       DOCKER_HUB_USERNAME:
         required: true
@@ -22,11 +19,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ inputs.go-version }}
 
     - name: Build Docker image
       run: docker build -t ${{ inputs.docker-image }} .
