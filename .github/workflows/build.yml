@@ -9,6 +9,11 @@ on:
       go-version:
         required: true
         type: string
+    secrets:
+      DOCKER_HUB_USERNAME:
+        required: true
+      DOCKER_HUB_PASSWORD:
+        required: true
 
 jobs:
   build:

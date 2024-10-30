@@ -20,6 +20,9 @@ jobs:
     with:
       docker-image: 'joaowillamy/go-service:latest'
       go-version: '1.21'
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
   # deploy:
   #   needs: [test, build]
