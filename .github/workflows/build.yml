@@ -9,6 +9,15 @@ on:
       docker-image:
         required: true
         type: string
+      docker-username:
+        required: true
+        type: string
+      docker-password:
+        required: true
+        type: string
+      go-version:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -21,21 +30,13 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.21'
-
-    - name: Restore Cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ inputs.cache-key }}
+        go-version: ${{ inputs.go-version }}
 
     - name: Build Docker image
       run: docker build -t ${{ inputs.docker-image }} .
 
     - name: Log in to Docker Hub
-      run: echo "${{  secrets.DOCKER_HUB_PASSWORD  }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      run: echo "${{ inputs.docker-password }}" | docker login -u "${{ inputs.docker-username }}" --password-stdin
 
     - name: Push Docker image
       run: docker push ${{ inputs.docker-image }}

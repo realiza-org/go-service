@@ -9,58 +9,26 @@ on:
       - main
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.cache-key.outputs.cache-key }}
-  
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.21'
-
-    - name: Cache Go modules
-      id: cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
-    - name: Install dependencies
-      run: go mod download
-
-    - name: Generate cache key
-      id: cache-key
-      run: echo "::set-output name=cache-key::go-cache-${{ runner.os }}-${{ hashFiles('**/go.sum') }}"    
-
   test:
-    needs: setup
     uses: ./.github/workflows/test.yml
     with:
-      cache-key: ${{ needs.setup.outputs.cache-key }}
       go-version: '1.21'
 
   build:
-    needs: setup
+    needs: test
     uses: ./.github/workflows/build.yml
     with:
       docker-image: 'joaowillamy/go-service:latest'
       cache-key: ${{ needs.setup.outputs.cache-key }}
+      docker-username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-#   deploy:
-#     needs: build
-#     uses: ./.github/workflows/deploy.yml
-#     with:
-#       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#       aws-region: 'us-east-1'
-#       ecs-cluster: 'main-cluster'
-#       ecs-service: 'go-service'
+  # deploy:
+  #   needs: [test, build]
+  #   uses: ./.github/workflows/deploy.yml
+  #   with:
+  #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #     aws-region: 'us-east-1'
+  #     ecs-cluster: 'main-cluster'
+  #     ecs-service: 'go-service'
