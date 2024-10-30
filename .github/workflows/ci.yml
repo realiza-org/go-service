@@ -19,9 +19,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       docker-image: 'joaowillamy/go-service:latest'
-      cache-key: ${{ needs.setup.outputs.cache-key }}
-      docker-username: ${{ secrets.DOCKER_HUB_USERNAME }}
-      docker-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      go-version: '1.21'
 
   # deploy:
   #   needs: [test, build]

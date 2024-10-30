@@ -3,16 +3,7 @@ name: Build and Push Docker Image
 on:
   workflow_call:
     inputs:
-      cache-key:
-        required: true
-        type: string
       docker-image:
-        required: true
-        type: string
-      docker-username:
-        required: true
-        type: string
-      docker-password:
         required: true
         type: string
       go-version:
@@ -36,7 +27,7 @@ jobs:
       run: docker build -t ${{ inputs.docker-image }} .
 
     - name: Log in to Docker Hub
-      run: echo "${{ inputs.docker-password }}" | docker login -u "${{ inputs.docker-username }}" --password-stdin
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
     - name: Push Docker image
       run: docker push ${{ inputs.docker-image }}
